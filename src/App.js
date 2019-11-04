@@ -1,36 +1,35 @@
-import React, {useRef} from 'react';
+import React, {useEffect, useState} from 'react';
 import './App.css';
+import Box from './components/box/box';
 
 function App() {
- 
-  const canvas = useRef(null);
-  
-  const drawSomething = () => {
-    const surface = canvas.current;
-    const draw2D = surface.getContext("2d");
 
-    draw2D.clearRect(0, 0, window.innerWidth, window.innerHeight);
+  const [mpos, setMpos] = useState({
+    x: 0,
+    y: 0
+  })
 
-    var grd = draw2D.createLinearGradient(window.innerWidth/4, window.innerHeight/4, window.innerWidth/2, window.innerHeight/2);
-    grd.addColorStop(0.5, "blue");
-    grd.addColorStop(.75, "orange");    
-    grd.addColorStop(1, "orangered");
+  const [isDrawing, setDrawing] = useState(false);
 
-    draw2D.fillStyle = grd;
-    draw2D.shadowBlur = 20;
-    draw2D.shadowColor = "darkslategrey";
-    draw2D.fillRect(window.innerWidth/4, window.innerHeight/4, window.innerWidth/2, window.innerHeight/2);
-    draw2D.strokeRect(window.innerWidth/4, window.innerHeight/4, window.innerWidth/2, window.innerHeight/2);
-  }
+  useEffect(() => {
+    window.addEventListener("mousemove", (e) => {
+      setMpos(() => ({x: e.x , y: e.y}));
+    })
+
+    window.addEventListener("mousedown" , (e) => {
+      setDrawing(() => true);
+    })
+
+    window.addEventListener("mouseup" , (e) => {
+      setDrawing(() => false);
+    })
+
+  }, [])
 
   return (
     <div className="App">
-      <canvas
-       ref={canvas} 
-       width={window.innerWidth} 
-       height={window.innerHeight}
-       onClick={()=>drawSomething()}
-       />
+
+       <Box x={mpos.x} y={mpos.y} width={200} height={200} draw={isDrawing} />
     </div>
   );
 }
